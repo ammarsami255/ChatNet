@@ -1,7 +1,7 @@
 import socket
 import threading
 from file_sender import send_file
-from dns_resolver import resolve_hostname
+from dns_resolver import resolve as resolve_hostname
 
 server_ip = input("Server IP or Hostname: ")
 
