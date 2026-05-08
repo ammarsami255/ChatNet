@@ -19,14 +19,19 @@ def resolve(hostname, dns_server="8.8.8.8", port=53):
     data, _ = sock.recvfrom(512)
     sock.close()
     
-    # Parse A record
+    # Parse answer - skip question section first
+    # Header=12, QNAME=labels+null, QTYPE=2, QCLASS=2
     offset = 12
-    while offset < len(data) and data[offset] != 0:
+    while data[offset] != 0:  # skip QNAME labels
         offset += data[offset] + 1
-    offset += 13
+    offset += 5  # skip null + QTYPE + QCLASS
     
-    if offset + 4 <= len(data):
-        return socket.inet_ntoa(data[offset:offset+4])
+    # Now at answer: NAME(can be pointer), TYPE(2), CLASS(2), TTL(4), RDLEN(2)
+    if offset + 12 <= len(data):
+        qtype = struct.unpack("!H", data[offset+2:offset+4])[0]
+        rdlen = struct.unpack("!H", data[offset+10:offset+12])[0]
+        if qtype == 1 and rdlen == 4:  # A record
+            return socket.inet_ntoa(data[offset+12:offset+16])
     return None
 
 if __name__ == "__main__":
