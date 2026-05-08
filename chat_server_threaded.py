@@ -70,7 +70,7 @@ def handle(conn):
 threading.Thread(target=log_server.start, daemon=True).start()
 
 print(f"ChatNet server on {HOST}:{PORT}")
-print(f"Chat log: http://localhost:8080/chatlog")
+print(f"Chat log: http://localhost:{log_server.PORT}/chatlog")
 
 while True:
     conn, addr = server.accept()

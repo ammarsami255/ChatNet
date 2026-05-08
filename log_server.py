@@ -4,7 +4,7 @@ import socket
 import threading
 from collections import deque
 
-PORT = 8080
+PORT = 8888
 MAX = 50
 messages = deque(maxlen=MAX)
 
@@ -33,7 +33,11 @@ def handle(s):
 def start():
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    server.bind(("0.0.0.0", PORT))
+    try:
+        server.bind(("0.0.0.0", PORT))
+    except OSError as e:
+        print(f"HTTP server failed: {e}")
+        return
     server.listen(5)
     print(f"HTTP server on port {PORT}")
     while True:
