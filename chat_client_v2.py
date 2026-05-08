@@ -1,8 +1,19 @@
 import socket
 import threading
 from file_sender import send_file
+from dns_resolver import resolve_hostname
 
-server_ip = input("Server IP: ")
+server_ip = input("Server IP or Hostname: ")
+
+# Resolve hostname if not an IP address
+if not server_ip.replace(".", "").isdigit():
+    print(f"Resolving hostname: {server_ip}")
+    resolved_ip = resolve_hostname(server_ip)
+    if resolved_ip:
+        print(f"Resolved {server_ip} → {resolved_ip}")
+        server_ip = resolved_ip
+    else:
+        print("DNS resolution failed, trying as-is")
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect((server_ip, 12000))
